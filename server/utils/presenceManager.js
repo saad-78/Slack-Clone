@@ -1,40 +1,26 @@
-const { redisClient, isRedisEnabled } = require('../config/redis');
+const { isRedisEnabled } = require('../config/redis');
 
 class PresenceManager {
-  async setUserOnline(userId, socketId) {
+  async setUserOnline() {
     if (!isRedisEnabled()) return;
-    await redisClient.hSet(`user:${userId}:sockets`, socketId, Date.now());
-    await redisClient.set(`user:${userId}:status`, 'online', { EX: 60 });
   }
 
-  async removeUserSocket(userId, socketId) {
+  async removeUserSocket() {
     if (!isRedisEnabled()) return;
-    await redisClient.hDel(`user:${userId}:sockets`, socketId);
-    const sockets = await redisClient.hGetAll(`user:${userId}:sockets`);
-    if (Object.keys(sockets).length === 0) {
-      await redisClient.set(`user:${userId}:status`, 'offline');
-    }
   }
 
-  async getUserStatus(userId) {
+  async getUserStatus() {
     if (!isRedisEnabled()) return 'offline';
-    return (await redisClient.get(`user:${userId}:status`)) || 'offline';
+    return 'offline';
   }
 
-  async getChannelOnlineUsers(memberIds) {
+  async getChannelOnlineUsers() {
     if (!isRedisEnabled()) return [];
-    const statuses = await Promise.all(
-      memberIds.map(async (id) => ({
-        userId: id.toString(),
-        status: await this.getUserStatus(id),
-      }))
-    );
-    return statuses.filter((s) => s.status === 'online');
+    return [];
   }
 
-  async updateHeartbeat(userId) {
+  async updateHeartbeat() {
     if (!isRedisEnabled()) return;
-    await redisClient.expire(`user:${userId}:status`, 60);
   }
 }
 
