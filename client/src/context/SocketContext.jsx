@@ -10,7 +10,7 @@ export const SocketProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    const s = io('http://localhost:5000', {
+    const s = io('https://slack-clone-0wm0.onrender.com', {
       auth: { token },
       transports: ['websocket'],
     });
