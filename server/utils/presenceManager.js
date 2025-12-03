@@ -1,7 +1,4 @@
-const { redisClient } = require('../config/redis');
-
-const isRedisEnabled = () => redisClient.isOpen;
-
+const { redisClient, isRedisEnabled } = require('../config/redis');
 
 class PresenceManager {
   async setUserOnline(userId, socketId) {
@@ -42,4 +39,3 @@ class PresenceManager {
 }
 
 module.exports = new PresenceManager();
-
